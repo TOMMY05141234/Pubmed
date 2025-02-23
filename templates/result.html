@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>検索結果</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #2C3E50, #4CA1AF);
+            color: white;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 800px;
+            text-align: center;
+        }
+        .result-content {
+            background: #d0f0c0;
+            padding: 20px;
+            border-radius: 10px;
+            color: black;
+        }
+        a {
+            color: #4CA1AF;
+            text-decoration: none;
+        }
+        pre {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: left;
+            white-space: pre-wrap;
+        }
+        .button-container, .social-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .button-container button, .social-buttons button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .copy-link-button, .copy-text-button, .save-button { background: #4CA1AF; }
+        .x-button { background: #000; }
+        .facebook-button { background: #1877F2; }
+        .line-button { background: #06C755; }
+        .instagram-button { background: #E4405F; }
+        .note-button { background: #41C9B4; }
+    </style>
+    <script>
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href);
+            alert("リンクをコピーしました！");
+        }
+        function copyText() {
+            let text = document.querySelector(".result-content").innerText;
+            navigator.clipboard.writeText(text);
+            alert("検索結果のテキストをコピーしました！");
+        }
+        function saveText() {
+            let text = document.querySelector(".result-content").innerText;
+            let blob = new Blob([text], { type: "text/plain" });
+            let link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "search_result.txt";
+            link.click();
+        }
+        function shareX() {
+            window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(document.title + " " + window.location.href), "_blank");
+        }
+        function shareFacebook() {
+            window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.href), "_blank");
+        }
+        function shareLINE() {
+            window.open("https://social-plugins.line.me/lineit/share?url=" + encodeURIComponent(window.location.href), "_blank");
+        }
+        function shareInstagram() {
+            alert("Instagramでは直接リンクを共有できません。プロフィール欄に貼り付けてください。");
+        }
+        function shareNote() {
+            window.open("https://note.com/intent/post?url=" + encodeURIComponent(window.location.href), "_blank");
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>検索ワード: {{ query }}</h1>
+        <div class="result-content">
+            {% if article %}
+                <h2>論文タイトル: <a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
+                <h3>要約:</h3>
+                <p>{{ article.abstract }}</p>
+            {% else %}
+                <h2>該当する論文が見つかりませんでした</h2>
+            {% endif %}
+            <h3>なんJスレッド:</h3>
+            <pre>{{ conversation }}</pre>
+        </div>
+        <div class="button-container">
+            <button class="copy-link-button" onclick="copyLink()">🔗 リンクをコピー</button>
+            <button class="copy-text-button" onclick="copyText()">📄 テキストをコピー</button>
+            <button class="save-button" onclick="saveText()">💾 保存</button>
+        </div>
+        <div class="social-buttons">
+            <button class="x-button" onclick="shareX()">✖️ X</button>
+            <button class="facebook-button" onclick="shareFacebook()">📘 Facebook</button>
+            <button class="line-button" onclick="shareLINE()">💬 LINE</button>
+            <button class="instagram-button" onclick="shareInstagram()">📷 Instagram</button>
+            <button class="note-button" onclick="shareNote()">📝 Note</button>
+        </div>
+        <button class="back-button" onclick="window.location.href='/'">戻る</button>
+    </div>
+</body>
+</html>
